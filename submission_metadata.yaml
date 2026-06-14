@@ -70,7 +70,9 @@ methodology_summary: |
   under a non-AI title; (5) bounded modifiers for availability (recency,
   recruiter response, open-to-work, verification; 0.5 floor), notice period
   (JD: 30+ raises the bar), GitHub/open-source external validation (small
-  asymmetric bonus; sentinel-safe), location, and job-hop stability. All
+  asymmetric bonus; sentinel-safe), location, job-hop stability, and a mild
+  recruiter-interest/reliability tiebreaker (saves, profile-views, interview-
+  completion — capped, since these are partly a popularity proxy). All
   sentinel(-1)/missing values map to neutral, never a penalty. Optimized for
   correctness/inspectability since there is no leaderboard or feedback. Runtime
   well under the 5-min budget (~0.5 min for 100k on CPU).

@@ -95,6 +95,7 @@ What differentiates it:
 4. **Availability/behavioral signals** — recency, recruiter response rate, open-to-work (measured: removing these reorders 6 of the top 10).
 5. **Experience band** (5–9 yrs), **product-vs-consulting**, **NLP/IR-vs-CV/speech**.
 6. **Hireability frictions** — notice period, location/visa; **external validation** — GitHub/OSS.
+7. **Recruiter interest / reliability** — recruiter-saves, profile-views, interview-completion. A *mild* tiebreaker: empirically these track quality even within the top tier, but we cap their influence because they're partly a popularity proxy the JD distrusts.
 
 **How we evaluate fit beyond keyword matching:**
 - We score the *narrative* of what they built, weighted above the skills list.
@@ -118,6 +119,7 @@ final = blended_fit(structured, cosine)      # JD-fit
         × notice_factor                       # notice-period friction
         × external_validation_factor          # GitHub/OSS bonus (asymmetric)
         × stability_factor                    # anti job-hopping
+        × desirability_factor                 # mild recruiter-interest/reliability tiebreaker (bounded 0.95–1.07)
 ```
 where `blended_fit = 0.70·structured + 0.30·cosine`, and
 `structured = 0.35·title + 0.30·career_substance + 0.15·YOE + 0.10·domain + 0.10·product`.
@@ -309,6 +311,7 @@ repo/
 | Notice period (30+ raises bar) | notice factor | `signals` |
 | Open-source / external validation | GitHub bonus (asymmetric) | `signals` |
 | Active / responsive | availability modifier | `signals` |
+| Recruiter interest / reliability (saves, views, interview-completion) | mild desirability tiebreaker (bounded) | `signals` |
 | Keyword stuffers | title↔skill penalty | `stuffer` |
 | Title-chasers / job-hoppers | stability factor | `signals` |
 | Honeypots → tier 0 | impossibility hard-reject | `honeypot` |

@@ -141,3 +141,29 @@ def stability_factor(candidate: dict) -> float:
     if avg < 18:
         return 0.95
     return 1.0
+
+
+# Desirability / reliability bonus, kept MILD on purpose.
+# Empirically these three signals track candidate quality (their correlation with
+# career substance, even WITHIN the strong-title pool, exceeds recruiter_response
+# _rate) and are not redundant with our other signals. But saves/views are partly
+# a *popularity* proxy and the JD distrusts "perfect-on-paper" signal-chasing, so
+# this is a gentle within-tier tiebreaker, never a top-10 gamble.
+DESIRABILITY_LO, DESIRABILITY_HI = 0.95, 1.07
+DESIRABILITY_WEIGHTS = {"saved": 0.45, "views": 0.30, "interview": 0.25}
+
+
+def desirability_factor(candidate: dict) -> float:
+    sig = candidate.get("redrob_signals", {}) or {}
+    saved = sig.get("saved_by_recruiters_30d")
+    views = sig.get("profile_views_received_30d")
+    icr = sig.get("interview_completion_rate")
+
+    saved_n = min((saved or 0) / 40.0, 1.0)
+    views_n = min((views or 0) / 150.0, 1.0)
+    # interview_completion ranges ~0.3-1.0; missing -> neutral, never a penalty.
+    icr_n = 0.5 if not isinstance(icr, (int, float)) else max(0.0, min((icr - 0.3) / 0.7, 1.0))
+
+    w = DESIRABILITY_WEIGHTS
+    d = w["saved"] * saved_n + w["views"] * views_n + w["interview"] * icr_n
+    return DESIRABILITY_LO + (DESIRABILITY_HI - DESIRABILITY_LO) * d

@@ -11,6 +11,7 @@ shipped ranking and the precomputed reasoning shortlist.
           x notice_factor                          # notice-period friction (JD: 30+ raises bar)
           x external_validation_factor             # GitHub/OSS bonus (asymmetric, sentinel-safe)
           x stability_factor                        # anti job-hopping (JD: no title-chasers)
+          x desirability_factor                     # mild recruiter-interest/reliability tiebreaker
 """
 
 from __future__ import annotations
@@ -28,4 +29,5 @@ def final_score(candidate: dict, fc: dict, cosine: float) -> float:
         * signals.notice_factor(candidate)
         * signals.external_validation_factor(candidate)
         * signals.stability_factor(candidate)
+        * signals.desirability_factor(candidate)
     )
