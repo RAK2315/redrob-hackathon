@@ -8,6 +8,11 @@ relevance labels). Designed for **correctness and inspectability**: there is no
 leaderboard, so every score is decomposable and the top-50 is meant to be read
 by a human.
 
+**Live demo:** https://huggingface.co/spaces/rak2315/redrob-hackathon
+**Result:** validated `submission.csv` (100 rows), **0 honeypots** in the top-100,
+all top-100 are strong AI/ML titles with retrieval/ranking evidence; runs in
+~30–50 s on CPU.
+
 ## Data
 
 `candidates.jsonl` (100k profiles, ~465 MB) is **not** committed — download it from
@@ -42,6 +47,20 @@ python precompute/build_reasoning.py     # template reasoning; LLM-upgraded if A
 Artifacts written to `artifacts/`: `embeddings.f16.npy` (~77 MB), `cand_ids.npy`,
 `jd_vecs.npy`, `reasoning_cache.json`.
 
+## Sandbox / demo
+
+A self-contained Gradio app in `sandbox/` is deployed as a HuggingFace Space:
+**https://huggingface.co/spaces/rak2315/redrob-hackathon**. It runs the exact
+ranking engine on a bundled 100-candidate sample (and accepts your own `.jsonl`
+upload, ≤100), showing the ranked list with grounded reasoning and the honeypots
+it auto-rejects. Numpy-only at inference — no model runs in the Space.
+
+## Submission metadata
+
+`submission_metadata.yaml` (repo root) mirrors the portal metadata: team, contact,
+repo + sandbox URLs, compute environment, AI-tools declaration, and a ≤200-word
+methodology summary.
+
 ## Architecture
 
 ```
@@ -52,11 +71,14 @@ ranker/
   honeypot.py   # impossible-profile hard-reject (DQ insurance)
   fit_score.py  # structured JD-fit sub-scores + dense-cosine blend
   stuffer.py    # keyword-stuffer penalty (AI skills under non-AI title)
-  signals.py    # bounded behavioral/availability modifier (sentinel-safe)
-  combine.py    # monotonic-score + candidate_id tie-break + CSV writer
+  signals.py    # bounded behavioral modifiers (availability, notice, location,
+                #   GitHub/OSS, stability, desirability) — all sentinel-safe
+  pipeline.py   # single source of truth for the final-score formula
+  combine.py    # 0-1 normalize + monotonic-score + candidate_id tie-break + CSV writer
   reasoning.py  # grounded reasoning + hallucination verifier
   dense.py      # load precomputed embeddings, cosine to JD
-precompute/     # offline artifact builders (untimed)
+precompute/     # offline artifact builders (untimed): embeddings, jd vector, reasoning, sandbox sample
+sandbox/        # self-contained HuggingFace Space (Gradio demo) — see below
 artifacts/      # shipped precomputed state
 ```
 
