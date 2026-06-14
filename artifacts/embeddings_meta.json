@@ -1,0 +1,7 @@
+{
+  "model": "all-MiniLM-L6-v2",
+  "dim": 384,
+  "max_seq_length": 128,
+  "n": 100000,
+  "normalized": true
+}

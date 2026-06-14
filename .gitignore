@@ -1,0 +1,25 @@
+# --- Large provided dataset (download separately; not redistributed) ---
+candidates.jsonl
+candidates.jsonl.gz
+
+# --- Organizer's challenge bundle (provided, not our work) ---
+job_description.docx
+README.docx
+redrob_signals_doc.docx
+submission_spec.docx
+sample_candidates.json
+sample_submission.csv
+submission_metadata_template.yaml
+_extracted.txt
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
