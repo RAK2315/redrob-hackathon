@@ -26,3 +26,6 @@ Thumbs.db
 
 # Office temp/lock files
 ~$*
+
+# Excel upload-format copies (derived from Sigmoid.csv; not a repo artifact)
+*.xlsx
