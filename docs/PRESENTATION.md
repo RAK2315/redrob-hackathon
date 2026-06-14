@@ -324,8 +324,8 @@ repo/
 - **GitHub:** https://github.com/RAK2315/redrob-hackathon (code, artifacts, README with one-command reproduce).
 - **Reproduce command:** `python rank.py --candidates ./candidates.jsonl --out ./submission.csv` (≤5 min, CPU, no network).
 - **Deliverable:** `submission.csv` (validated by `validate_submission.py`).
-- **Sandbox:** hosted demo (HF Space / Colab) running the ranker on a ≤100-candidate sample. *(to add)*
-- **Demo video:** walkthrough of architecture + a live run. *(to record)*
+- **Sandbox (REQUIRED by spec §10.5):** hosted demo (HF Space / Colab) running the ranker on a ≤100-candidate sample. *(to add)*
+- **Demo video:** optional — only if your hackathon's presentation round asks for it (the challenge spec requires a live Stage-5 interview call, not a recorded video). *(optional)*
 - **Metadata:** `submission_metadata.yaml` (team, compute, AI-tools declaration, methodology).
 
 *Speaker notes:* Everything needed for Stage-3 reproduction is in the repo; the sandbox and video are the lightweight verification layer.
