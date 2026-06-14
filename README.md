@@ -25,9 +25,11 @@ so the ranking step runs without rebuilding them.
 ```bash
 # Needs only numpy + the precomputed artifacts/ (shipped in this repo).
 pip install numpy
-python rank.py --candidates ./candidates.jsonl --out ./submission.csv
-python validate_submission.py submission.csv      # -> "Submission is valid."
+python rank.py --candidates ./candidates.jsonl --out ./Sigmoid.csv
+python validate_submission.py Sigmoid.csv      # -> "Submission is valid."
 ```
+
+`Sigmoid.csv` (committed) is the ranked top-100 deliverable submitted to the portal.
 
 **Time guard:** the ranking step runs on CPU, no GPU, **no network**, and
 completes in **under a minute (~30–50 s measured)** for the full 100k pool — well

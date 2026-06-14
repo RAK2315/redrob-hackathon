@@ -21,7 +21,7 @@ github_repo: "https://github.com/RAK2315/redrob-hackathon"
 sandbox_link: "https://huggingface.co/spaces/rak2315/redrob-hackathon"
 # HuggingFace Space (Gradio) runs the ranker on a <=100-candidate sample.
 
-reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./Sigmoid.csv"
 # Ranking step only; loads precomputed artifacts/. Runs end-to-end on CPU in well
 # under 5 minutes (measured ~30-50 s for the full 100k pool).
 
