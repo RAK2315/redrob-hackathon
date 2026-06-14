@@ -25,15 +25,15 @@ python validate_submission.py submission.csv      # -> "Submission is valid."
 ```
 
 **Time guard:** the ranking step runs on CPU, no GPU, **no network**, and
-completes in **~1–1.5 minutes** for the full 100k pool — well inside the
-5-minute / 16 GB budget. It loads precomputed embeddings; it never runs the
-embedding model.
+completes in **under a minute (~30–50 s measured)** for the full 100k pool — well
+inside the 5-minute / 16 GB budget. It loads precomputed embeddings; it never runs
+the embedding model.
 
 ## Rebuild the precomputed artifacts (offline, untimed)
 
 ```bash
 pip install -r requirements.txt
-# ~55 min on CPU; embeds all 100k profiles with all-MiniLM-L6-v2 (cached locally).
+# ~50 min on CPU; embeds all 100k profiles with all-MiniLM-L6-v2 (cached locally).
 python precompute/build_embeddings.py --max-seq-length 128
 python precompute/build_jd_vector.py
 python precompute/build_reasoning.py     # template reasoning; LLM-upgraded if ANTHROPIC_API_KEY set
@@ -63,8 +63,9 @@ artifacts/      # shipped precomputed state
 Pipeline (single formula in `ranker/pipeline.py`): honeypot reject → structured
 fit (title + career substance dominate) → 0.70·structured + 0.30·cosine → stuffer
 penalty → bounded availability modifier × location factor × notice-period factor ×
-GitHub/OSS external-validation bonus × job-hop stability factor → sort with
-validator invariants → top 100 → grounded reasoning → assert 0 honeypots in output.
+GitHub/OSS external-validation bonus × job-hop stability factor × mild desirability
+factor (recruiter-saves/views/interview-completion) → sort with validator invariants
+→ top 100 (scores normalized to 0–1) → grounded reasoning → assert 0 honeypots in output.
 
 Every JD signal is encoded: "absolutely need" (retrieval/vector/ranking-eval →
 career substance + cosine), 5–9 yrs, product-not-consulting, NLP/IR-not-CV/speech,

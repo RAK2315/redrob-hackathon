@@ -82,6 +82,9 @@ def template_reasoning(candidate: dict, fc: dict, rank: int) -> str:
 
     # --- Concern clause: honest gaps, weighted toward lower ranks ---
     concerns = []
+    if isinstance(yoe, (int, float)) and not (jd_spec.YOE_MIN <= yoe <= jd_spec.YOE_MAX):
+        side = "below" if yoe < jd_spec.YOE_MIN else "above"
+        concerns.append(f"{yoe:.1f}y experience is {side} the 5-9yr band")
     rr = f["response_rate"]
     if isinstance(rr, (int, float)) and rr < 0.25:
         concerns.append(f"low recruiter response rate ({rr:.2f})")
