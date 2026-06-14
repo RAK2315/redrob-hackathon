@@ -18,7 +18,7 @@ from ranker.fit_score import fit_components
 from ranker.pipeline import final_score
 from ranker.honeypot import is_honeypot, honeypot_reasons
 from ranker.dense import load_cosine_map
-from ranker.combine import order_candidates
+from ranker.combine import order_candidates, normalize_scores
 from ranker.reasoning import template_reasoning
 
 HERE = Path(__file__).resolve().parent
@@ -52,12 +52,13 @@ def rank(candidates: list[dict]):
         comps[c["candidate_id"]] = fc
 
     ordered = order_candidates(scored)[:100]
+    norm = normalize_scores(ordered)   # clean 0-1 scores, same as the submission
     rows = []
-    for rk, (cid, score) in enumerate(ordered, 1):
+    for rk, (cid, _score) in enumerate(ordered, 1):
         c = by_id[cid]
         rows.append([
             rk, cid, c["profile"]["current_title"],
-            c["profile"]["years_of_experience"], round(score, 4),
+            c["profile"]["years_of_experience"], norm[rk - 1],
             template_reasoning(c, comps[cid], rk),
         ])
     summary = (f"**Ranked {len(rows)} candidates.** "
