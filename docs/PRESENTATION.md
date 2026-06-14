@@ -210,7 +210,7 @@ JD (.docx)                         candidates.jsonl (100k)
                                         6. assert 0 honeypots
                                               │
                                               ▼
-                                       submission.csv  ──▶  validate_submission.py ✓
+                                       Sigmoid.csv  ──▶  validate_submission.py ✓
 ```
 
 - **Offline phase** (run once, ~49 min): embed 100k profiles, build JD vector + reasoning cache → shipped as `artifacts/`.
@@ -238,7 +238,7 @@ repo/
 │   └── reasoning.py         grounded reasoning + hallucination verifier
 ├── precompute/              build_embeddings · build_jd_vector · build_reasoning
 ├── artifacts/               embeddings.f16.npy · cand_ids.npy · jd_vecs.npy · reasoning_cache.json
-├── submission.csv           the deliverable
+├── Sigmoid.csv              the deliverable (top-100 ranking)
 ├── requirements.txt · submission_metadata.yaml · README.md · validate_submission.py
 ```
 
@@ -325,9 +325,9 @@ repo/
 ## Slide 19 — Submission Assets
 
 - **GitHub:** https://github.com/RAK2315/redrob-hackathon (code, artifacts, README with one-command reproduce).
-- **Reproduce command:** `python rank.py --candidates ./candidates.jsonl --out ./submission.csv` (≤5 min, CPU, no network).
-- **Deliverable:** `submission.csv` (validated by `validate_submission.py`).
-- **Sandbox (REQUIRED by spec §10.5):** hosted demo (HF Space / Colab) running the ranker on a ≤100-candidate sample. *(to add)*
+- **Reproduce command:** `python rank.py --candidates ./candidates.jsonl --out ./Sigmoid.csv` (≤5 min, CPU, no network).
+- **Deliverable:** `Sigmoid.csv` (validated by `validate_submission.py`).
+- **Sandbox (REQUIRED by spec §10.5):** **live** HF Space — https://huggingface.co/spaces/rak2315/redrob-hackathon — runs the ranker on a ≤100-candidate sample (and accepts uploads).
 - **Demo video:** optional — only if your hackathon's presentation round asks for it (the challenge spec requires a live Stage-5 interview call, not a recorded video). *(optional)*
 - **Metadata:** `submission_metadata.yaml` (team, compute, AI-tools declaration, methodology).
 
