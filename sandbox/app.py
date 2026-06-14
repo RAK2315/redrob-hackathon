@@ -3,7 +3,8 @@
 Runs the exact ranking engine (ranker/) on a <=100-candidate sample and shows the
 ranked output with grounded reasoning, plus the honeypots it auto-rejected. A
 reviewer can also upload their own small .jsonl. Numpy-only at inference time —
-embeddings are precomputed (artifacts/), so no model runs here.
+embeddings are precomputed (artifacts/), so no model runs here. No pandas, to
+keep the Space build light and fast.
 """
 
 from __future__ import annotations
@@ -12,7 +13,6 @@ import json
 from pathlib import Path
 
 import gradio as gr
-import pandas as pd
 
 from ranker.fit_score import fit_components
 from ranker.pipeline import final_score
@@ -24,6 +24,9 @@ from ranker.reasoning import template_reasoning
 HERE = Path(__file__).resolve().parent
 SAMPLE = HERE / "sample_100.jsonl"
 COSINE = load_cosine_map(HERE / "artifacts") or {}
+
+RANKED_HEADERS = ["rank", "candidate_id", "title", "yoe", "score", "reasoning"]
+REJECT_HEADERS = ["candidate_id", "honeypot_reason"]
 
 
 def _load(path: Path) -> list[dict]:
@@ -38,7 +41,7 @@ def _load(path: Path) -> list[dict]:
 
 def rank(candidates: list[dict]):
     by_id = {c["candidate_id"]: c for c in candidates}
-    rejected = [(c["candidate_id"], "; ".join(honeypot_reasons(c)))
+    rejected = [[c["candidate_id"], "; ".join(honeypot_reasons(c))]
                 for c in candidates if is_honeypot(c)]
     scored, comps = [], {}
     for c in candidates:
@@ -52,20 +55,14 @@ def rank(candidates: list[dict]):
     rows = []
     for rk, (cid, score) in enumerate(ordered, 1):
         c = by_id[cid]
-        rows.append({
-            "rank": rk,
-            "candidate_id": cid,
-            "title": c["profile"]["current_title"],
-            "yoe": c["profile"]["years_of_experience"],
-            "score": round(score, 4),
-            "reasoning": template_reasoning(c, comps[cid], rk),
-        })
-    ranked_df = pd.DataFrame(rows)
-    rej_df = pd.DataFrame(rejected, columns=["candidate_id", "honeypot_reason"]) \
-        if rejected else pd.DataFrame(columns=["candidate_id", "honeypot_reason"])
-    summary = (f"Ranked {len(rows)} candidates. "
-               f"Auto-rejected {len(rejected)} impossible/honeypot profiles before ranking.")
-    return summary, ranked_df, rej_df
+        rows.append([
+            rk, cid, c["profile"]["current_title"],
+            c["profile"]["years_of_experience"], round(score, 4),
+            template_reasoning(c, comps[cid], rk),
+        ])
+    summary = (f"**Ranked {len(rows)} candidates.** "
+               f"Auto-rejected **{len(rejected)}** impossible/honeypot profiles before ranking.")
+    return summary, rows, rejected
 
 
 def run_sample():
@@ -74,7 +71,8 @@ def run_sample():
 
 def run_upload(file):
     if file is None:
-        return "Upload a .jsonl with up to 100 candidate records (schema as in candidate_schema.json).", None, None
+        return ("Upload a `.jsonl` with up to 100 candidate records "
+                "(schema as in candidate_schema.json)."), [], []
     return rank(_load(Path(file.name)))
 
 
@@ -92,9 +90,9 @@ with gr.Blocks(title="Redrob Candidate Ranker") as demo:
         up = gr.File(label="…or upload your own .jsonl (<=100)", file_types=[".jsonl"])
     status = gr.Markdown()
     gr.Markdown("### Ranked candidates")
-    out = gr.Dataframe(wrap=True)
+    out = gr.Dataframe(headers=RANKED_HEADERS, wrap=True, interactive=False)
     gr.Markdown("### Auto-rejected (honeypots / impossible profiles)")
-    rej = gr.Dataframe(wrap=True)
+    rej = gr.Dataframe(headers=REJECT_HEADERS, wrap=True, interactive=False)
 
     btn.click(run_sample, outputs=[status, out, rej])
     up.change(run_upload, inputs=up, outputs=[status, out, rej])
