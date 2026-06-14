@@ -17,9 +17,17 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-SCORE_DECIMALS = 6
+SCORE_DECIMALS = 6        # internal precision used to fix the ranking order
+OUTPUT_DECIMALS = 4       # precision of the score written to the CSV
 TOP_N = 100
 REQUIRED_HEADER = ["candidate_id", "rank", "score", "reasoning"]
+
+# The raw score is an unnormalized fit×modifiers product (can exceed 1.0). For a
+# clean, human-readable submission that matches the spec's 0-1 convention, we
+# min-max map the top-N raw scores onto this range. This is strictly
+# order-preserving (monotonic), so it never changes the ranking and preserves
+# the non-increasing / tie-break invariants the validator checks.
+NORM_LO, NORM_HI = 0.40, 0.99
 
 
 def order_candidates(scored: list[tuple[str, float]]) -> list[tuple[str, float]]:
@@ -57,14 +65,26 @@ def build_submission(
             f"need {top_n}. Loosen filters."
         )
 
+    # Min-max normalize the raw scores onto [NORM_LO, NORM_HI] (order-preserving).
+    raw = [s for _, s in ordered]
+    hi, lo = raw[0], raw[-1]              # ordered is non-increasing
+    span = hi - lo
+    norm = [NORM_HI if span <= 0 else
+            NORM_LO + (NORM_HI - NORM_LO) * (s - lo) / span for s in raw]
+    norm = [round(x, OUTPUT_DECIMALS) for x in norm]
+    # Clamp to strictly non-increasing (defends against any rounding edge).
+    for i in range(1, len(norm)):
+        if norm[i] > norm[i - 1]:
+            norm[i] = norm[i - 1]
+
     rows = []
-    for i, (cid, score) in enumerate(ordered):
+    for i, (cid, _raw) in enumerate(ordered):
         rank = i + 1
         reasoning = reasoning_map.get(cid, "").strip() or "Included in top-100 shortlist."
         rows.append({
             "candidate_id": cid,
             "rank": rank,
-            "score": f"{score:.{SCORE_DECIMALS}f}",
+            "score": f"{norm[i]:.{OUTPUT_DECIMALS}f}",
             "reasoning": reasoning,
         })
 

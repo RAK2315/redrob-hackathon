@@ -124,9 +124,9 @@ final = blended_fit(structured, cosine)      # JD-fit
 where `blended_fit = 0.70·structured + 0.30·cosine`, and
 `structured = 0.35·title + 0.30·career_substance + 0.15·YOE + 0.10·domain + 0.10·product`.
 
-**Rank:** sort by score; **clamp scores non-increasing by rank**; break ties by ascending `candidate_id`; take top 100.
+**Rank:** sort by score; **clamp scores non-increasing by rank**; break ties by ascending `candidate_id`; take top 100. The raw score is an unnormalized fit×modifiers product, so the final CSV scores are **min-max normalized to [0.40, 0.99]** (order-preserving) to match the spec's 0–1 convention and read cleanly for reviewers.
 
-*Speaker notes:* Structured fit is weighted 0.70 so embedding similarity can never promote a non-AI title into the top — the central anti-trap design choice.
+*Speaker notes:* Structured fit is weighted 0.70 so embedding similarity can never promote a non-AI title into the top — the central anti-trap design choice. Normalization is purely cosmetic — only the order matters for NDCG/MAP.
 
 ---
 
@@ -256,10 +256,10 @@ repo/
 - **~90/100** India (rest relocation-friendly) · **74/100** in the 5–9 yr band.
 - After adding hireability signals: notice ≥90d candidates **49 → 32**; externally-validated (GitHub) **77 → 82**.
 
-**Top-3 (illustrative):**
-1. Search Engineer, 7.6 yr @ Sarvam AI — retrieval/ranking, GitHub 61, response 0.94, 45-day notice.
-2. Search Engineer, 5.1 yr @ CRED — retrieval/ranking, GitHub 87, response 0.80.
-3. Sr ML Engineer, 6.1 yr @ Genpact AI — retrieval/ranking, sweet spot, response 0.88.
+**Top-3 (illustrative; scores normalized to 0–1):**
+1. Search Engineer, 7.6 yr @ Sarvam AI — retrieval/ranking, recruiter-saves 60, interview-completion 0.90, 45-day notice. *(score 0.99)*
+2. Sr ML Engineer, 6.1 yr @ Genpact AI — retrieval/ranking, in the 6–8yr sweet spot, strong recruiter interest.
+3. Search Engineer, 5.1 yr @ CRED — retrieval/ranking, profile-views 168, GitHub 87.
 
 **Robustness (our proxy for quality, since there's no leaderboard):**
 - Top-10 stable across blend weights; rank-1 invariant.
