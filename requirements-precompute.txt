@@ -1,0 +1,17 @@
+# OFFLINE artifact rebuild only (precompute/build_*.py). NOT needed to reproduce
+# the submission CSV — the artifacts/ are shipped in the repo and rank.py loads them.
+#
+# CPU-only torch (no CUDA):
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+numpy>=1.26
+sentence-transformers>=3.0
+torch>=2.1
+transformers>=4.40
+huggingface-hub>=0.24
+
+# Optional: convert the ranked CSV to .xlsx (build the Excel deliverable).
+pandas>=2.0
+openpyxl>=3.1
+
+# Optional: LLM-upgraded reasoning in build_reasoning.py, only if ANTHROPIC_API_KEY is set.
+# anthropic>=0.40

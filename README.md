@@ -39,7 +39,7 @@ the embedding model.
 ## Rebuild the precomputed artifacts (offline, untimed)
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements-precompute.txt
 # ~50 min on CPU; embeds all 100k profiles with all-MiniLM-L6-v2 (cached locally).
 python precompute/build_embeddings.py --max-seq-length 128
 python precompute/build_jd_vector.py

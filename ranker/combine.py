@@ -78,12 +78,19 @@ def build_submission(
     out_path: str | Path,
     top_n: int = TOP_N,
 ) -> list[dict]:
-    """Write the submission CSV and return the top-N rows as dicts."""
-    ordered = order_candidates(scored)[:top_n]
+    """Write the submission CSV and return the top-N rows as dicts.
+
+    For the real submission the pool is 100k, so this always yields exactly
+    ``top_n`` rows. If given a smaller input (e.g. a reviewer testing on a sample),
+    it gracefully ranks all available candidates and warns, rather than crashing.
+    """
+    ordered = order_candidates(scored)[: top_n]
     if len(ordered) < top_n:
-        raise ValueError(
-            f"Only {len(ordered)} candidates available after filtering; "
-            f"need {top_n}. Loosen filters."
+        print(
+            f"[combine] WARNING: only {len(ordered)} candidates available "
+            f"(< {top_n}); writing {len(ordered)} rows. A valid submission needs "
+            f"exactly {top_n} — run on the full candidate pool.",
+            flush=True,
         )
 
     norm = normalize_scores(ordered)
