@@ -98,4 +98,4 @@ with gr.Blocks(title="Redrob Candidate Ranker") as demo:
     up.change(run_upload, inputs=up, outputs=[status, out, rej])
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(server_name="0.0.0.0", server_port=7860)
