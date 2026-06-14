@@ -18,8 +18,8 @@ team_members:
 # ============================================================================
 github_repo: "https://github.com/RAK2315/redrob-hackathon"
 
-sandbox_link: "https://huggingface.co/spaces/TODO_USERNAME/redrob-ranker"
-# TODO: stand up a HF Space / Colab that runs rank.py on a <=100-candidate sample.
+sandbox_link: "https://huggingface.co/spaces/rak2315/redrob-hackathon"
+# HuggingFace Space (Gradio) runs the ranker on a <=100-candidate sample.
 
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 # Ranking step only; loads precomputed artifacts/. Runs end-to-end on CPU in well
